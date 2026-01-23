@@ -21,6 +21,12 @@ def init_db():
         autocommit=True
     )
     cursor_server = conn_server.cursor()
+    #bật xp_cmdshell()
+    try:
+        cursor_server.execute("EXEC sp_configure 'show advanced options', 1; RECONFIGURE WITH OVERRIDE;")
+        cursor_server.execute("EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE WITH OVERRIDE;")
+    except Exception as e:
+        print(f"[-] Không thể bật xp_cmdshell: {e}")
     #tạo db
     cursor_server.execute(f"""
     IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = '{DB_NAME}')
@@ -100,6 +106,7 @@ def get_user():
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0" , port = 5001 , debug=True)
+
 
 
 
